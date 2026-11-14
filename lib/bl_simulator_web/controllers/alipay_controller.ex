@@ -4,8 +4,8 @@ defmodule BlSimulatorWeb.AlipayController do
   alias BlSimulatorWeb.ResponseFormatter
 
   @doc """
-  Step 1: Decode QR code and get merchant information
-  Returns merchant details and payment request ID for next step
+  Step 1: Decode QR code and get merchant information.
+  Returns merchant details and paymentRequestId for the next step.
   """
   def user_initiated_pay(conn, params) when is_map(params) do
     with {:ok, validated_params} <- validate_user_initiated_params(params),
@@ -19,8 +19,8 @@ defmodule BlSimulatorWeb.AlipayController do
   end
 
   @doc """
-  Step 2: Process Alipay+ payment
-  Uses merchant info and payment details to complete transaction
+  Step 2: Process Alipay+ payment.
+  Uses merchant info and payment details to complete transaction.
   """
   def push_payment(conn, params) when is_map(params) do
     with {:ok, validated_params} <- validate_push_payment_params(params),
@@ -37,11 +37,13 @@ defmodule BlSimulatorWeb.AlipayController do
   # Private functions
 
   defp validate_user_initiated_params(params) do
+    qr_code = get_qr_code_from_params(params)
+
     cond do
-      is_nil(params["qr_code"]) or params["qr_code"] == "" ->
+      is_nil(qr_code) or qr_code == "" ->
         {:error, "QR code is required"}
 
-      String.length(params["qr_code"]) < 10 ->
+      String.length(qr_code) < 10 ->
         {:error, "QR code appears to be invalid"}
 
       true ->
@@ -50,8 +52,10 @@ defmodule BlSimulatorWeb.AlipayController do
   end
 
   defp validate_push_payment_params(params) do
+    qr_code = get_qr_code_from_params(params)
+
     cond do
-      is_nil(params["qr_code"]) or params["qr_code"] == "" ->
+      is_nil(qr_code) or qr_code == "" ->
         {:error, "QR code is required"}
 
       is_nil(params["amount"]) or params["amount"] == "0" or params["amount"] == "" ->
@@ -75,12 +79,13 @@ defmodule BlSimulatorWeb.AlipayController do
     end
   end
 
+  defp valid_amount?(amount) when is_integer(amount) and amount > 0, do: true
   defp valid_amount?(_), do: false
 
   defp process_user_initiated_pay(conn, qr_code, params) do
     alipay_payload =
       if has_alipay_fields?(params) do
-        params |> Map.put("codeValue", qr_code)
+        Map.put(params, "codeValue", qr_code)
       else
         build_alipay_user_initiated_payload(qr_code, params)
       end
@@ -99,14 +104,9 @@ defmodule BlSimulatorWeb.AlipayController do
             result_code: Map.get(result, "resultCode")
           )
 
-          # 1. Format the full response map to get the user-friendly error details
           error_response = format_alipay_error(response)
-          # 2. Extract the best message for the simulator display
-          # We use the detail message ("The code is invalid.") as requested in the JSON example.
           display_message = error_response["details"] || "Alipay processing error"
 
-          # 3. Return an error response (e.g., HTTP 400) with the error details.
-          # We pass the result_code as the message type and the detail message for display.
           ResponseFormatter.error_response(
             conn,
             400,
@@ -114,16 +114,12 @@ defmodule BlSimulatorWeb.AlipayController do
             display_message
           )
         else
-          # ORIGINAL SUCCESS LOGIC: Continue with success formatting if status is "S" or "U"
           Logger.info("Alipay userInitiatedPay success")
           formatted_response = format_qr_decode_response(response)
           ResponseFormatter.success_response(conn, formatted_response)
         end
 
-      # NEW LOGIC END
-
       {:error, status_code, error_body} when is_integer(status_code) ->
-        # EXISTING LOGIC: Handles true HTTP errors (4xx, 5xx)
         Logger.warning("Alipay userInitiatedPay failed",
           status: status_code,
           error: error_body
@@ -230,17 +226,13 @@ defmodule BlSimulatorWeb.AlipayController do
       "merchantName" =>
         get_in(response, ["merchant", "merchantName"]) ||
           get_in(response, ["order", "merchant", "merchantName"]) || "Unknown Merchant",
-      #   "merchant_id" => get_in(response, ["merchant", "referenceMerchantId"]) || "N/A",
       "merchantMCC" =>
         get_in(response, ["merchant", "merchantMCC"]) ||
           get_in(response, ["order", "merchant", "merchantMCC"]) || "0000",
-      #   "store_name" => get_in(response, ["store", "storeName"]) || "",
       "code_type" => response["codeType"] || "STORE_CODE",
       "is_dynamic" => response["codeType"] == "ORDER_CODE",
       "amount" => get_in(response, ["paymentAmount", "value"]),
       "currency" => get_in(response, ["paymentAmount", "currency"]) || "KHR",
-      #   "max_amount" => get_in(response, ["maxPaymentAmount", "value"]) || "999999999",
-      #   "min_amount" => get_in(response, ["minPaymentAmount", "value"]) || "100",
       "paymentRequestId" => response["paymentRequestId"],
       "message" =>
         if(response["codeType"],

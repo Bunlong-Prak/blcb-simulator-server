@@ -42,11 +42,3 @@ defmodule BlSimulatorWeb.Router do
   end
 end
 
-# scope("/temp") do
-#   post "/checkMerchantKHQRAcceptance", UpiController, :check_merchant_khqr_acceptance
-#   post "/upiIncomingKhqrTxn", UpiController, :upi_incoming_khqr_txn
-
-# end
-
-# post "/bakong-khqr/verify-and-decode", UpiController, :verify_merchant_khqr_acceptance
-# post "/qr/details", UpiController, :get_qr_details

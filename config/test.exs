@@ -20,6 +20,16 @@ config :bl_simulator, BlSimulatorWeb.Endpoint,
   secret_key_base: "F2GFHmdYa3mqE1ymGn5mYys2Na6vnKQM4NelTxbsgnEKunU6UcswN9pQEDHvkooS",
   server: false
 
+# Upstream mock base URLs for test
+config :bl_simulator,
+  alipay_base_url: "http://localhost:4002",
+  bongloy_base_url: "http://localhost:4002",
+  bakong_base_url: "http://localhost:4002",
+  upi_base_url: "http://localhost:4002"
+
+# Use Tesla.Mock adapter during testing to prevent live external network calls
+config :tesla, adapter: Tesla.Mock
+
 # In test we don't send emails
 config :bl_simulator, BlSimulator.Mailer, adapter: Swoosh.Adapters.Test
 
