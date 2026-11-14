@@ -1,0 +1,41 @@
+# The directory Mix will write compiled artifacts to.
+/_build/
+
+# If you run "mix test --cover", coverage assets end up here.
+/cover/
+
+# The directory Mix will keep dependencies in.
+/deps/
+
+# Where third-party dependencies like ExDoc output generated docs.
+/doc/
+
+# Ignore the build directory of assets (if any)
+/priv/static/assets/
+
+# Ignore temporary files
+*.swp
+*.swo
+*~
+.DS_Store
+*.DS_Store
+
+# Node modules
+node_modules/
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Mix artifacts
+*.ez
+
+# Crash dumps
+erl_crash.dump
+
+# IDE and Editor files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace

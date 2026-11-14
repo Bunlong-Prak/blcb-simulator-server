@@ -1,6 +1,6 @@
 defmodule BlSimulator.UpiClient do
   @moduledoc """
-  Tesla HTTP client for calling real Alipay+ APIs
+  Tesla HTTP client for calling UnionPay International (UPI) APIs
   """
   use Tesla
 
@@ -9,6 +9,10 @@ defmodule BlSimulator.UpiClient do
   plug Tesla.Middleware.Headers, [{"content-type", "application/json"}]
   plug Tesla.Middleware.Timeout, timeout: 30_000
 
+  @doc """
+  Sends incoming KHQR transaction payload to UnionPay API.
+  """
+  @spec upi_incoming_khqr_txn(map()) :: {:ok, map()} | {:error, integer() | :network_error, any()}
   def upi_incoming_khqr_txn(payload) do
     post("/temp/upiIncomingKhqrTxn", payload)
     |> handle_response()
