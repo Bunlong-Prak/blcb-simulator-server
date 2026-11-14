@@ -1,0 +1,42 @@
+version: "3.8"
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "4000:4000"
+    environment:
+      - PORT=4000
+      - PHX_HOST=localhost
+      - PHX_SERVER=true
+      - DATABASE_URL=ecto://postgres:postgres@db:5432/bl_simulator_prod
+      - SECRET_KEY_BASE=lfiOZ1xvSDIWjytU73JAZLcyoTD7Qdi0fXfYlPQgdq+LbKDU2P7Gfaiu9Q5XM7Kc
+      - ALIPAY_BASE_URL=${ALIPAY_BASE_URL:-http://host.docker.internal:4002}
+      - BONGLOY_BASE_URL=${BONGLOY_BASE_URL:-https://verify.bongloy.asia}
+      - BAKONG_BASE_URL=${BAKONG_BASE_URL:-http://172.168.253.12:8000}
+      - UPI_URL=${UPI_URL:-http://host.docker.internal:4003}
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: postgres:16-alpine
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: bl_simulator_prod
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:

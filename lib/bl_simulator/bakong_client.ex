@@ -12,7 +12,8 @@ defmodule BlSimulator.BakongClient do
   @doc """
   Verifies and decodes a Bakong KHQR string.
   """
-  @spec verify_merchant_khqr_acceptance(map()) :: {:ok, map()} | {:error, integer() | :network_error, any()}
+  @spec verify_merchant_khqr_acceptance(map()) ::
+          {:ok, map()} | {:error, integer() | :network_error, any()}
   def verify_merchant_khqr_acceptance(payload) do
     post("/bakong-khqr/verify-and-decode", payload)
     |> handle_response()

@@ -16,11 +16,13 @@ import Config
 #
 # Alternatively, you can use `mix phx.gen.release` to generate a `bin/server`
 # script that automatically sets the env var above.
-config :bl_simulator,
-  alipay_base_url: System.get_env("ALIPAY_BASE_URL") || "http://localhost:4002",
-  bongloy_base_url: System.get_env("BONGLOY_BASE_URL") || "https://verify.bongloy.asia",
-  bakong_base_url: System.get_env("BAKONG_BASE_URL")||"http://172.168.253.12:8000",
-  upi_base_url: System.get_env("UPI_URL")|| "http://localhost:4003"
+if config_env() != :test do
+  config :bl_simulator,
+    alipay_base_url: System.get_env("ALIPAY_BASE_URL") || "http://localhost:4002",
+    bongloy_base_url: System.get_env("BONGLOY_BASE_URL") || "https://verify.bongloy.asia",
+    bakong_base_url: System.get_env("BAKONG_BASE_URL") || "http://172.168.253.12:8000",
+    upi_base_url: System.get_env("UPI_URL") || "http://localhost:4003"
+end
 
 if System.get_env("PHX_SERVER") do
   config :bl_simulator, BlSimulatorWeb.Endpoint, server: true
@@ -41,7 +43,6 @@ if config_env() == :prod do
     url: database_url,
     pool_size: String.to_integer(System.get_env("POOL_SIZE") || "10"),
     socket_options: maybe_ipv6
-
 
   # The secret key base is used to sign/encrypt cookies and other secrets.
   # A default value is used in config/dev.exs and config/test.exs but you

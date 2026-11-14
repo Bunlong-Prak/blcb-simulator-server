@@ -1,0 +1,16 @@
+# .dockerignore
+.git
+.gitignore
+.env
+.env.*
+!.env.example
+_build
+cover
+deps
+doc
+priv/static/assets
+*.swp
+*.swo
+*~
+.DS_Store
+erl_crash.dump

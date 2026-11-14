@@ -10,8 +10,15 @@ defmodule BlSimulatorWeb.Plugs.CORSTest do
 
       assert conn.status == 200
       assert get_resp_header(conn, "access-control-allow-origin") == ["*"]
-      assert get_resp_header(conn, "access-control-allow-methods") == ["GET, POST, PUT, DELETE, OPTIONS"]
-      assert get_resp_header(conn, "access-control-allow-headers") == ["Content-Type, Authorization, X-Requested-With"]
+
+      assert get_resp_header(conn, "access-control-allow-methods") == [
+               "GET, POST, PUT, DELETE, OPTIONS"
+             ]
+
+      assert get_resp_header(conn, "access-control-allow-headers") == [
+               "Content-Type, Authorization, X-Requested-With"
+             ]
+
       assert get_resp_header(conn, "access-control-max-age") == ["3600"]
       assert conn.halted
     end
@@ -21,7 +28,10 @@ defmodule BlSimulatorWeb.Plugs.CORSTest do
 
       assert conn.status == 200
       assert get_resp_header(conn, "access-control-allow-origin") == ["*"]
-      assert get_resp_header(conn, "access-control-allow-methods") == ["GET, POST, PUT, DELETE, OPTIONS"]
+
+      assert get_resp_header(conn, "access-control-allow-methods") == [
+               "GET, POST, PUT, DELETE, OPTIONS"
+             ]
     end
   end
 end

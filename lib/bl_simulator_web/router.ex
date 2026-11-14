@@ -12,7 +12,6 @@ defmodule BlSimulatorWeb.Router do
 
   pipeline :api do
     plug :accepts, ["json"]
-    plug BlSimulatorWeb.Plugs.CORS
   end
 
   scope "/", BlSimulatorWeb do
@@ -41,4 +40,3 @@ defmodule BlSimulatorWeb.Router do
     post "/unionpay/payment", UpiController, :process_payment
   end
 end
-

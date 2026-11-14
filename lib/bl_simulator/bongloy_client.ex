@@ -12,7 +12,8 @@ defmodule BlSimulator.BongloyClient do
   @doc """
   Checks merchant acceptance for KHQR via Bongloy API.
   """
-  @spec check_merchant_khqr_acceptance(map()) :: {:ok, map()} | {:error, integer() | :network_error, any()}
+  @spec check_merchant_khqr_acceptance(map()) ::
+          {:ok, map()} | {:error, integer() | :network_error, any()}
   def check_merchant_khqr_acceptance(payload) do
     post("/temp/checkMerchantKHQRAcceptance", payload)
     |> handle_response()

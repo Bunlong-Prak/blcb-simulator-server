@@ -22,15 +22,12 @@ config :bl_simulator, BlSimulatorWeb.Endpoint,
   pubsub_server: BlSimulator.PubSub,
   live_view: [signing_salt: "UOYkr7oS"]
 
-
-  # Tesla configuration
+# Tesla configuration
 config :tesla, adapter: Tesla.Adapter.Hackney
 config :tesla, disable_deprecated_builder_warning: true
 
-
 # CORS configuration
-config :bl_simulator, BlSimulatorWeb.Endpoint,
-  check_origin: false
+config :bl_simulator, BlSimulatorWeb.Endpoint, check_origin: false
 # Configures the mailer
 #
 # By default it uses the "Local" adapter which stores the emails

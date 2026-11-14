@@ -28,6 +28,7 @@ config :bl_simulator, BlSimulatorWeb.Endpoint,
     esbuild: {Esbuild, :install_and_run, [:bl_simulator, ~w(--sourcemap=inline --watch)]},
     tailwind: {Tailwind, :install_and_run, [:bl_simulator, ~w(--watch)]}
   ]
+
 # config :bl_simulator,
 #   alipay_base_url: System.get_env("ALIPAY_BASE_URL") || "http://localhost:4002"
 # ## SSL Support

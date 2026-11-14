@@ -41,11 +41,23 @@ defmodule BlSimulatorWeb.UpiController do
 
           {:error, status_code, error_body} when is_integer(status_code) ->
             Logger.warning("Merchant status check HTTP error", error: error_body)
-            ResponseFormatter.error_response(conn, status_code, "MERCHANT_CHECK_FAILED", "Cannot verify merchant")
+
+            ResponseFormatter.error_response(
+              conn,
+              status_code,
+              "MERCHANT_CHECK_FAILED",
+              "Cannot verify merchant"
+            )
 
           {:error, :network_error, reason} ->
             Logger.error("Merchant status check network error", reason: reason)
-            ResponseFormatter.error_response(conn, 500, "NETWORK_ERROR", "Unable to connect to verification service")
+
+            ResponseFormatter.error_response(
+              conn,
+              500,
+              "NETWORK_ERROR",
+              "Unable to connect to verification service"
+            )
         end
 
       {:error, reason} ->
@@ -63,7 +75,9 @@ defmodule BlSimulatorWeb.UpiController do
 
     case validate_qr_code(qr_code) do
       :ok ->
-        Logger.info("Getting QR details for UnionPay flow", qr_code: String.slice(qr_code, 0, 20) <> "...")
+        Logger.info("Getting QR details for UnionPay flow",
+          qr_code: String.slice(qr_code, 0, 20) <> "..."
+        )
 
         case BlSimulator.BakongClient.verify_merchant_khqr_acceptance(%{"qr_code" => qr_code}) do
           {:ok, response} ->
@@ -76,16 +90,31 @@ defmodule BlSimulatorWeb.UpiController do
               "is_dynamic" => not is_nil(data["transactionAmount"])
             }
 
-            Logger.info("QR details retrieved successfully", merchant: merchant_info["merchantName"])
+            Logger.info("QR details retrieved successfully",
+              merchant: merchant_info["merchantName"]
+            )
+
             ResponseFormatter.success_response(conn, merchant_info)
 
           {:error, status, error} when is_integer(status) ->
             Logger.warning("Invalid QR code", error: error)
-            ResponseFormatter.error_response(conn, status, "INVALID_QR", "QR code is invalid or expired")
+
+            ResponseFormatter.error_response(
+              conn,
+              status,
+              "INVALID_QR",
+              "QR code is invalid or expired"
+            )
 
           {:error, :network_error, reason} ->
             Logger.error("Bakong decode network error", reason: reason)
-            ResponseFormatter.error_response(conn, 500, "NETWORK_ERROR", "Unable to connect to QR service")
+
+            ResponseFormatter.error_response(
+              conn,
+              500,
+              "NETWORK_ERROR",
+              "Unable to connect to QR service"
+            )
         end
 
       {:error, reason} ->
@@ -196,6 +225,7 @@ defmodule BlSimulatorWeb.UpiController do
 
   defp validate_payment_qr(params) do
     qr_code = get_qr_code_from_params(params)
+
     case validate_qr_code(qr_code) do
       :ok -> {:ok, qr_code}
       error -> error

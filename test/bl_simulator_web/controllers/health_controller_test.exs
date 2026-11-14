@@ -4,8 +4,6 @@ defmodule BlSimulatorWeb.HealthControllerTest do
   describe "GET /api/health" do
     test "returns healthy status and service info", %{conn: conn} do
       conn = get(conn, ~p"/api/health")
-
-      assert json_response(conn, 200) =~ "healthy"
       body = json_response(conn, 200)
 
       assert body["status"] == "healthy"
