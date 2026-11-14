@@ -9,12 +9,14 @@ defmodule BlSimulator.BongloyClient do
   plug Tesla.Middleware.Headers, [{"content-type", "application/json"}]
   plug Tesla.Middleware.Timeout, timeout: 30_000
 
+  @doc """
+  Checks merchant acceptance for KHQR via Bongloy API.
+  """
+  @spec check_merchant_khqr_acceptance(map()) :: {:ok, map()} | {:error, integer() | :network_error, any()}
   def check_merchant_khqr_acceptance(payload) do
     post("/temp/checkMerchantKHQRAcceptance", payload)
     |> handle_response()
   end
-
-
 
   defp handle_response({:ok, %Tesla.Env{status: status, body: body}}) when status in 200..299 do
     {:ok, body}

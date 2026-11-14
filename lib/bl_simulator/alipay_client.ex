@@ -1,6 +1,6 @@
 defmodule BlSimulator.AlipayClient do
   @moduledoc """
-  Tesla HTTP client for calling real Alipay+ APIs
+  Tesla HTTP client for calling Alipay+ APIs
   """
   use Tesla
 
@@ -9,12 +9,19 @@ defmodule BlSimulator.AlipayClient do
   plug Tesla.Middleware.Headers, [{"content-type", "application/json"}]
   plug Tesla.Middleware.Timeout, timeout: 30_000
 
+  @doc """
+  Initiates user-initiated pay (QR decode) call to Alipay+.
+  """
+  @spec user_initiated_pay(map()) :: {:ok, map()} | {:error, integer() | :network_error, any()}
   def user_initiated_pay(payload) do
     post("/payments/userInitiatedPay", payload)
     |> handle_response()
   end
 
-  @spec push_payment(any()) :: {:ok, any()} | {:error, :network_error | nil | integer(), any()}
+  @doc """
+  Initiates push payment call to Alipay+.
+  """
+  @spec push_payment(map()) :: {:ok, map()} | {:error, integer() | :network_error, any()}
   def push_payment(payload) do
     post("/pushPayments/pay", payload)
     |> handle_response()

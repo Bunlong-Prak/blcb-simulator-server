@@ -1,6 +1,6 @@
 defmodule BlSimulator.BakongClient do
   @moduledoc """
-  Tesla HTTP client for calling Bongloy verification APIs
+  Tesla HTTP client for calling Bakong KHQR verification & decode APIs
   """
   use Tesla
 
@@ -9,11 +9,12 @@ defmodule BlSimulator.BakongClient do
   plug Tesla.Middleware.Headers, [{"content-type", "application/json"}]
   plug Tesla.Middleware.Timeout, timeout: 30_000
 
+  @doc """
+  Verifies and decodes a Bakong KHQR string.
+  """
+  @spec verify_merchant_khqr_acceptance(map()) :: {:ok, map()} | {:error, integer() | :network_error, any()}
   def verify_merchant_khqr_acceptance(payload) do
-    post(
-      "/bakong-khqr/verify-and-decode",
-      payload
-    )
+    post("/bakong-khqr/verify-and-decode", payload)
     |> handle_response()
   end
 
