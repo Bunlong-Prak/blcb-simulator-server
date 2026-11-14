@@ -292,12 +292,17 @@ All external base URLs and runtime secrets are managed via `config/runtime.exs` 
    cd blcb-simulator-server
    ```
 
-2. **Install dependencies:**
+2. **Configure environment:**
+   ```bash
+   cp .env.example .env
+   ```
+
+3. **Install dependencies:**
    ```bash
    mix deps.get
    ```
 
-3. **Set up database:**
+4. **Set up database:**
    ```bash
    mix ecto.setup
    ```
@@ -317,6 +322,25 @@ iex -S mix phx.server
 The simulator will be available at `http://localhost:4000`. You can test the health endpoint immediately:
 ```bash
 curl http://localhost:4000/api/health
+```
+
+### Running with Docker
+
+Run the application along with PostgreSQL in containers:
+```bash
+docker-compose up --build -d
+```
+
+### Running Tests
+
+The test suite uses isolated sandbox databases and mocked upstream Tesla clients (`Tesla.Mock`):
+
+```bash
+# Run unit and integration tests
+mix test
+
+# Verify code formatting
+mix format --check-formatted
 ```
 
 ---
